@@ -10,7 +10,10 @@ using System.Reflection.Metadata;
 var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddScoped<ICustomerRepository, DbCustomerRepository>();
 
-string connectionString = "Data Source=shopper.db";
+// string connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 // 1. dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 builder.Services.AddDbContext<ShopperDb>(options => options.UseSqlite(connectionString));
 
