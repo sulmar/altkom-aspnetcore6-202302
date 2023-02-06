@@ -4,6 +4,8 @@ using Altkom.Shopper.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
+// Minimal Api
+
 var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddScoped<ICustomerRepository, DbCustomerRepository>();
 
@@ -49,11 +51,14 @@ app.MapGet("/api/customers/{id}", (int id, ShopperDb db) => db.Customers.Find(id
 */
 
 // Match Patterns
-app.MapGet("/api/customers/{id}", (int id, ShopperDb db) => db.Customers.Find(id) switch
+// Route Params GET api/customers/{id}
+app.MapGet("/api/customers/{id:min(1)}", (int id, ShopperDb db) => db.Customers.Find(id) switch
 {
     Customer customer => Results.Ok(customer),
     _ => Results.NotFound()
 }).WithName("GetCustomerById");
+
+
 
 app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator linkGenerator) =>
 {
@@ -65,5 +70,16 @@ app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator li
 
     return Results.CreatedAtRoute("GetCustomerById", new { Id = customer.Id }, customer);
 });
+
+
+// Query Params
+// GET api/products?color=red&maxprice=100
+app.MapGet("/api/products", (string color, decimal maxPrice) => $"Product {color} {maxPrice}");
+
+// GET api/products/{id}
+app.MapGet("/api/products/{id:int}", (int id) => $"Product {id}");
+
+// GET api/products/{symbol}
+app.MapGet("/api/products/{symbol}", (string symbol) => $"Product {symbol}");
 
 app.Run();
