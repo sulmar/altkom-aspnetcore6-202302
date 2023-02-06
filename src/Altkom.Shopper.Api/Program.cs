@@ -1,3 +1,4 @@
+using Altkom.Shopper.Api;
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
@@ -17,6 +18,11 @@ string connectionString = builder.Configuration.GetConnectionString("DefaultConn
 // 1. dotnet add package Microsoft.EntityFrameworkCore.Sqlite
 builder.Services.AddDbContext<ShopperDb>(options => options.UseSqlite(connectionString));
 
+var url = builder.Configuration["NbpApi:Url"];
+
+builder.Services.Configure<NbpCurrencyServiceOptions>(builder.Configuration.GetSection("NbpApi"));
+
+builder.Services.AddSingleton<ICurrencyService, NbpCurrencyService>();
 
 // 2. dotnet tool install --global dotnet-ef
 // 3. dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0.13
@@ -122,7 +128,7 @@ app.MapMethods("/api/customers/{id:int}", new string[] { "HEAD" }, (int id, Shop
 app.MapGet("/api/products", (string color, decimal maxPrice) => $"Product {color} {maxPrice}");
 
 // GET api/products/{id}
-app.MapGet("/api/products/{id:int}", (int id) => $"Product {id}");
+app.MapGet("/api/products/{id:int}", (int id, ICurrencyService currencyService) => $"Product {id} {currencyService.GetRatio()}");
 
 // GET api/products/{symbol}
 app.MapGet("/api/products/{symbol}", (string symbol) => $"Product {symbol}");
