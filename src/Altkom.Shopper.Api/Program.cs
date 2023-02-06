@@ -9,6 +9,26 @@ using System.Reflection.Metadata;
 // Minimal Api
 
 var builder = WebApplication.CreateBuilder(args);
+
+string environmentName = builder.Environment.EnvironmentName;
+
+// builder.Configuration.AddJsonFile("appsettings.json", optional: false) // default
+// builder.Configuration.AddJsonFile($"appsettings.{environmentName}.json", optional: true) // default
+// builder.Configuration.AddJsonFile() // default
+// builder.Configuration.AddCommandLine(args); // dotnet run --NbpApi:Url=domain.com // default
+// builder.Configuration.AddEnvironmentVariables(); // DOTNET_ // default
+builder.Configuration.AddXmlFile("appsettings.xml", optional: true);
+builder.Configuration.AddXmlFile($"appsettings.{environmentName}.xml", optional: true);
+builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
+{
+    ["NbpApi:Url"] = "domain.com",
+    ["NbpApi:CurrencyCode"] = "EUR",
+});
+
+// YAML
+// W³asny dostawca konfiguracji (provider)
+// https://learn.microsoft.com/en-us/dotnet/core/extensions/custom-configuration-provider
+
 // builder.Services.AddScoped<ICustomerRepository, DbCustomerRepository>();
 
 // string connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];

@@ -1,0 +1,5 @@
+﻿<Configuration>
+	<NbpApi>
+		<Url>http://prod.nbp.pl</Url>
+	</NbpApi>	
+</Configuration>
