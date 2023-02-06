@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Altkom.Shopper.Domain\Altkom.Shopper.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
