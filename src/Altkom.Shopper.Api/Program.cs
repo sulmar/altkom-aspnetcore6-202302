@@ -1,6 +1,7 @@
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata;
 
@@ -59,7 +60,6 @@ app.MapGet("/api/customers/{id:min(1)}", (int id, ShopperDb db) => db.Customers.
 }).WithName("GetCustomerById");
 
 
-
 app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator linkGenerator) =>
 {
     db.Customers.Add(customer);
@@ -71,6 +71,48 @@ app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator li
     return Results.CreatedAtRoute("GetCustomerById", new { Id = customer.Id }, customer);
 });
 
+// PUT api/customers/{id} 
+app.MapPut("/api/customers/{id:int}", (int id, Customer customer, ShopperDb db) =>
+{
+    if (id != customer.Id)
+        return Results.BadRequest();
+
+    db.Customers.Update(customer); 
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
+
+// TODO: dodaæ link do przyk³adowej implementacji
+// JsonPatch https://jsonpatch.com/
+// Json Merge Patch https://www.rfc-editor.org/rfc/rfc7386
+// PATCH api/customers/{id} 
+app.MapMethods("/api/customers/{id:int}", new string[] { "PATCH" }, () => Results.NoContent());
+
+// DELETE api/customers/{id}
+app.MapDelete("/api/customers/{id:int}", (int id, ShopperDb db) =>
+{
+    var customer = db.Customers.Find(id);
+
+    if (customer == null)
+        return Results.NotFound();
+
+    db.Customers.Remove(customer);
+    db.SaveChanges();
+
+    return Results.NoContent();
+});
+
+// HEAD api/customers/{id}
+app.MapMethods("/api/customers/{id:int}", new string[] { "HEAD" }, (int id, ShopperDb db) =>
+{
+    if (db.Customers.Any(p => p.Id == id))
+    {
+        return Results.Ok();
+    }
+    else
+        return Results.NotFound();
+});
 
 // Query Params
 // GET api/products?color=red&maxprice=100
@@ -81,5 +123,7 @@ app.MapGet("/api/products/{id:int}", (int id) => $"Product {id}");
 
 // GET api/products/{symbol}
 app.MapGet("/api/products/{symbol}", (string symbol) => $"Product {symbol}");
+
+// TODO: Background Worker
 
 app.Run();
