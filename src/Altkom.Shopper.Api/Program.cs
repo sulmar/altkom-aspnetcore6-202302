@@ -54,6 +54,13 @@ builder.Services.AddSingleton<ICurrencyService, NbpCurrencyService>();
 // 5. Zaimplementuj IDesignTimeDbContextFactory
 // 6. dotnet ef migrations add Init
 
+
+
+
+// dotnet add package Swashbuckle.AspNetCore
+builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+
 var app = builder.Build();
 
 await app.Services.EnsureDatabase<ShopperDb>();
@@ -92,7 +99,11 @@ app.MapGet("/api/customers/{id:min(1)}", (int id, ICustomerRepository repository
 {
     Customer customer => Results.Ok(customer),
     _ => Results.NotFound()
-}).WithName("GetCustomerById");
+})
+    .WithName("GetCustomerById")
+    .Produces<Customer>(StatusCodes.Status200OK)
+    .Produces(StatusCodes.Status404NotFound)
+    ;
 
 
 app.MapPost("/api/customers", (Customer customer, ICustomerRepository repository) =>
@@ -190,7 +201,15 @@ app.MapGet("/api/vehicles/{id}", (
     [FromQuery(Name = "s")] bool sort,
     [FromBody] string content,
     [FromServices] ICustomerRepository repository,    
-    [FromHeader(Name = "X-ApiKey")] string apiKey) => Results.Ok());
+    [FromHeader(Name = "X-ApiKey")] string apiKey) => Results.Ok())
+    .ExcludeFromDescription()
+    ;
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();   // https://localhost:7201/swagger/v1/swagger.json
+    app.UseSwaggerUI(); // https://localhost:7201/swagger
+}
 
 // TODO: Background Worker
 
