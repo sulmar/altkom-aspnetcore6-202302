@@ -2,9 +2,7 @@ using Altkom.Shopper.Api;
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata;
 
 // Minimal Api
 
@@ -29,7 +27,7 @@ builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
 // W≥asny dostawca konfiguracji (provider)
 // https://learn.microsoft.com/en-us/dotnet/core/extensions/custom-configuration-provider
 
-// builder.Services.AddScoped<ICustomerRepository, DbCustomerRepository>();
+builder.Services.AddScoped<ICustomerRepository, DbCustomerRepository>();
 
 // string connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
@@ -44,21 +42,25 @@ builder.Services.Configure<NbpCurrencyServiceOptions>(builder.Configuration.GetS
 
 builder.Services.AddSingleton<ICurrencyService, NbpCurrencyService>();
 
-// 2. dotnet tool install --global dotnet-ef
-// 3. dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0.13
-// 4. dotnet ef migrations add Init
+
+// 1. dotnet tool install --global dotnet-ef
+// 2. Przejdü do folderu projektu Altkom.Shopper.Infrastructure
+// 3. dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 6.0.13
+// 4. dotnet add package Microsoft.EntityFrameworkCore.Design --version 6.0.13
+// 5. Zaimplementuj IDesignTimeDbContextFactory
+// 6. dotnet ef migrations add Init
 
 var app = builder.Build();
 
 await app.Services.EnsureDatabase<ShopperDb>();
 
 app.MapGet("/", () => "Hello World!");
-// app.MapGet("/api/customers", (ICustomerRepository repository) => repository.GetAll());
+app.MapGet("/api/customers", (ICustomerRepository repository) => repository.GetAll());
 
 // GET  - 200 OK, 404 Not Found
 // POST - 201 Created + Location
 
-app.MapGet("/api/customers", (ShopperDb db) => db.Customers.ToList());
+// app.MapGet("/api/customers", (ShopperDb db) => db.Customers.ToList());
 
 /*
 app.MapGet("/api/customers/{id}", (int id, ShopperDb db) =>
@@ -82,17 +84,16 @@ app.MapGet("/api/customers/{id}", (int id, ShopperDb db) => db.Customers.Find(id
 
 // Match Patterns
 // Route Params GET api/customers/{id}
-app.MapGet("/api/customers/{id:min(1)}", (int id, ShopperDb db) => db.Customers.Find(id) switch
+app.MapGet("/api/customers/{id:min(1)}", (int id, ICustomerRepository repository) => repository.GetById(id) switch
 {
     Customer customer => Results.Ok(customer),
     _ => Results.NotFound()
 }).WithName("GetCustomerById");
 
 
-app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator linkGenerator) =>
+app.MapPost("/api/customers", (Customer customer, ICustomerRepository repository) =>
 {
-    db.Customers.Add(customer);
-    db.SaveChanges();
+    repository.Add(customer);
 
     // var url = linkGenerator.GetPathByName("GetCustomerById");
     // return Results.Created(url, new { Id = customer.Id }, customer);
@@ -101,13 +102,12 @@ app.MapPost("/api/customers", (Customer customer, ShopperDb db, LinkGenerator li
 });
 
 // PUT api/customers/{id} 
-app.MapPut("/api/customers/{id:int}", (int id, Customer customer, ShopperDb db) =>
+app.MapPut("/api/customers/{id:int}", (int id, Customer customer, ICustomerRepository repository) =>
 {
     if (id != customer.Id)
         return Results.BadRequest();
 
-    db.Customers.Update(customer); 
-    db.SaveChanges();
+    repository.Update(customer);    
 
     return Results.NoContent();
 });
@@ -119,23 +119,17 @@ app.MapPut("/api/customers/{id:int}", (int id, Customer customer, ShopperDb db) 
 app.MapMethods("/api/customers/{id:int}", new string[] { "PATCH" }, () => Results.NoContent());
 
 // DELETE api/customers/{id}
-app.MapDelete("/api/customers/{id:int}", (int id, ShopperDb db) =>
+app.MapDelete("/api/customers/{id:int}", (int id, ICustomerRepository repository) =>
 {
-    var customer = db.Customers.Find(id);
-
-    if (customer == null)
-        return Results.NotFound();
-
-    db.Customers.Remove(customer);
-    db.SaveChanges();
+    repository.Remove(id);
 
     return Results.NoContent();
 });
 
 // HEAD api/customers/{id}
-app.MapMethods("/api/customers/{id:int}", new string[] { "HEAD" }, (int id, ShopperDb db) =>
+app.MapMethods("/api/customers/{id:int}", new string[] { "HEAD" }, (int id, ICustomerRepository repository) =>
 {
-    if (db.Customers.Any(p => p.Id == id))
+    if (repository.Exists(id))
     {
         return Results.Ok();
     }

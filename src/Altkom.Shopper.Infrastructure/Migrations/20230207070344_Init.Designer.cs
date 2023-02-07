@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Altkom.Shopper.Api.Migrations
+namespace Altkom.Shopper.Infrastructure.Migrations
 {
     [DbContext(typeof(ShopperDb))]
-    [Migration("20230206110045_Init")]
+    [Migration("20230207070344_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

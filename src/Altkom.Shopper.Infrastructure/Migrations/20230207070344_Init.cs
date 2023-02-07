@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Altkom.Shopper.Api.Migrations
+namespace Altkom.Shopper.Infrastructure.Migrations
 {
     public partial class Init : Migration
     {

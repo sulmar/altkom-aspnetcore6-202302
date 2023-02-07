@@ -32,15 +32,12 @@
 
 	<ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.13">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.13" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Altkom.Shopper.Domain\Altkom.Shopper.Domain.csproj" />
+    <ProjectReference Include="..\Altkom.Shopper.Infrastructure\Altkom.Shopper.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

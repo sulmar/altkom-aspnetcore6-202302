@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Altkom.Shopper.Api.Migrations
+namespace Altkom.Shopper.Infrastructure.Migrations
 {
     [DbContext(typeof(ShopperDb))]
     partial class ShopperDbModelSnapshot : ModelSnapshot

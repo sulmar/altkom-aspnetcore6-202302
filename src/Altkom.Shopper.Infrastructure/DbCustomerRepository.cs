@@ -17,6 +17,11 @@ public class DbCustomerRepository : ICustomerRepository
         db.SaveChanges();
     }
 
+    public bool Exists(int id)
+    {
+        return db.Customers.Any(c => c.Id == id);
+    }
+
     public IEnumerable<Customer> GetAll()
     {
         return db.Customers.ToList();
@@ -25,5 +30,18 @@ public class DbCustomerRepository : ICustomerRepository
     public Customer GetById(int id)
     {
         return db.Customers.Find(id);
+    }
+
+    public void Remove(int id)
+    {
+        var customer = new Customer { Id = id };
+        db.Customers.Remove(customer);
+        db.SaveChanges();
+    }
+
+    public void Update(Customer customer)
+    {
+        db.Customers.Update(customer);
+        db.SaveChanges();
     }
 }
