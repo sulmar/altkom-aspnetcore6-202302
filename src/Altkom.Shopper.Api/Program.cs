@@ -1,5 +1,6 @@
 using Altkom.Shopper.Api;
 using Altkom.Shopper.Api.Extensions;
+using Altkom.Shopper.Api.Middlewares;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -86,6 +87,51 @@ builder.Logging.AddJsonConsole(options =>
 
 
 var app = builder.Build();
+
+// Warstwa poœrednia (Middleware) Logger
+//app.Use( async (context, next) =>
+//{
+//    // na wejœciu (¿¹danie)
+//    app.Logger.LogInformation("{Method} {Path}", context.Request.Method, context.Request.Path);
+
+//    // nastêpnik 
+//    await next();
+
+//    // na wyjœciu (odpowiedŸ)
+//    app.Logger.LogInformation("{StatusCode}", context.Response.StatusCode);
+
+//});
+
+// Warstwa poœrednia (Middleware) ApiKey
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Headers.TryGetValue("X-ApiKey", out var apikey) && apikey == "123")
+//    {
+//        await next();
+//    }
+//    else
+//    {
+//        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+//    }
+//});
+
+// app.UseMiddleware<LoggerMiddleware>();
+app.UseLogger();
+app.UseMiddleware<ApiKeyMiddleware>();
+
+// Redirect
+app.Use(async (context, next) =>
+{
+    var url = context.Request.Path.Value;
+
+    if (url.Contains("/home/privacy"))
+    {
+        context.Response.Redirect("/swagger");
+        return;
+    }
+
+    await next();
+});
 
 app.Logger.LogInformation("Started!");
 
