@@ -2,6 +2,7 @@ using Altkom.Shopper.Api;
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 // Minimal Api
@@ -149,6 +150,47 @@ app.MapGet("/api/products/{id:int}", (int id, ICurrencyService currencyService) 
 
 // GET api/products/{symbol}
 app.MapGet("/api/products/{symbol}", (string symbol) => $"Product {symbol}");
+
+
+app.MapGet("/api/orders", (HttpContext context) =>
+{
+    var request = context.Request;
+
+    string apiKey = request.Headers["X-ApiKey"];
+
+    if (apiKey == "123")
+    {
+        context.Response.WriteAsync("Hello World!");
+    }
+    else
+    {
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+    }
+});
+
+
+app.MapGet("/api/orders/{id}", (int id, HttpRequest request, HttpResponse response) =>
+{    
+    string apiKey = request.Headers["X-ApiKey"];
+
+    if (apiKey == "123")
+    {
+        response.WriteAsync("Hello World!");
+    }
+    else
+    {
+        response.StatusCode = StatusCodes.Status401Unauthorized;
+    }
+});
+
+// GET /api/vehicles/{id}?p=3&s=true
+app.MapGet("/api/vehicles/{id}", (
+    [FromRoute] int id,    
+    [FromQuery(Name = "p")] int page,
+    [FromQuery(Name = "s")] bool sort,
+    [FromBody] string content,
+    [FromServices] ICustomerRepository repository,    
+    [FromHeader(Name = "X-ApiKey")] string apiKey) => Results.Ok());
 
 // TODO: Background Worker
 
