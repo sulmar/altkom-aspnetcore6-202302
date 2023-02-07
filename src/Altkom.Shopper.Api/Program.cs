@@ -16,6 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Us³uga w tle
 builder.Services.AddHostedService<Worker>();
 
+// Windows Service using BackgroundService
+// https://learn.microsoft.com/en-us/dotnet/core/extensions/windows-service#rewrite-the-program-class
+
+// Linux Service using BackgroundService
+// https://code-maze.com/aspnetcore-running-applications-as-linux-service/
+
 builder.Services.AddAuthentication("ApiKey")
     .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>("ApiKey", options => builder.Configuration.Bind("ApiKeySettings", options));
 
