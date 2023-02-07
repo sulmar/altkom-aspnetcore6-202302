@@ -21,6 +21,10 @@ builder.Services.AddHostedService<Worker>();
 
 // Linux Service using BackgroundService
 // https://code-maze.com/aspnetcore-running-applications-as-linux-service/
+ //.UseWindowsService(options =>
+ // {
+ //     options.ServiceName = ".NET Joke Service";
+ // })
 
 builder.Services.AddAuthentication("ApiKey")
     .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>("ApiKey", options => builder.Configuration.Bind("ApiKeySettings", options));
