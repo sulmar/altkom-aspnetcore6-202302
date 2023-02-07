@@ -8,16 +8,20 @@ namespace Altkom.Shopper.Api.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _userRepository;
+    private readonly ILogger<UsersController> logger;
 
-    public UsersController(IUserRepository userRepository)
+    public UsersController(IUserRepository userRepository, ILogger<UsersController> logger)
     {
         _userRepository = userRepository;
+        this.logger = logger;
     }
 
     // GET api/users    
     [HttpGet]    
     public IEnumerable<User> Get([FromServices] ICurrencyService currencyService)
     {
+        logger.LogInformation("Get all users");
+
         return _userRepository.GetAll();
     }
 
@@ -25,6 +29,12 @@ public class UsersController : ControllerBase
     [HttpGet("/api/users/{id:int}")]
     public ActionResult<User> Get(int id)
     {
+        // zła praktyka
+        // logger.LogInformation($"Get user id = {id}");
+
+        // dobra praktyka
+        logger.LogInformation("Get user id = {id}", id);
+
         var user = _userRepository.GetById(id); 
 
         if (user == null)

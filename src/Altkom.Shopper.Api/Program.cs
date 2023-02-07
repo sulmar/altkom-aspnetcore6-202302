@@ -4,10 +4,12 @@ using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 // Minimal Api
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 string environmentName = builder.Environment.EnvironmentName;
 
@@ -64,7 +66,28 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddControllers();
 
+
+// builder.Logging.AddConsole(); // default
+builder.Logging.AddJsonConsole(options =>
+{
+    options.IncludeScopes = false;
+    options.TimestampFormat = "HH:mm:ss";
+    options.JsonWriterOptions = new JsonWriterOptions
+    {
+        Indented = true
+    };
+});
+
+// Seq
+// https://datalust.co/seq
+
+// Open Telemetry
+// https://opentelemetry.io/
+
+
 var app = builder.Build();
+
+app.Logger.LogInformation("Started!");
 
 await app.Services.EnsureDatabase<ShopperDb>();
 
