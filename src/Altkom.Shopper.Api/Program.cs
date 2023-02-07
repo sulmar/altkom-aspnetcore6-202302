@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 string environmentName = builder.Environment.EnvironmentName;
 
+
+// dotnet publish -c Debug -r win-x64 /p:EnvironmentName = Development
+
 // builder.Configuration.AddJsonFile("appsettings.json", optional: false) // default
 // builder.Configuration.AddJsonFile($"appsettings.{environmentName}.json", optional: true) // default
 // builder.Configuration.AddJsonFile() // default
