@@ -1,4 +1,5 @@
 using Altkom.Shopper.Api;
+using Altkom.Shopper.Api.Authentication;
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Api.Middlewares;
 using Altkom.Shopper.Domain;
@@ -10,6 +11,11 @@ using System.Text.Json;
 // Minimal Api
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication("ApiKey")
+    .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>("ApiKey", options => builder.Configuration.Bind("ApiKeySettings", options));
+
+builder.Services.AddAuthorization();
 
 
 string environmentName = builder.Environment.EnvironmentName;
@@ -88,6 +94,10 @@ builder.Logging.AddJsonConsole(options =>
 
 var app = builder.Build();
 
+
+app.UseAuthentication(); 
+app.UseAuthorization();
+
 // Warstwa poœrednia (Middleware) Logger
 //app.Use( async (context, next) =>
 //{
@@ -117,7 +127,7 @@ var app = builder.Build();
 
 // app.UseMiddleware<LoggerMiddleware>();
 app.UseLogger();
-app.UseMiddleware<ApiKeyMiddleware>();
+// app.UseMiddleware<ApiKeyMiddleware>();
 
 // Redirect
 app.Use(async (context, next) =>

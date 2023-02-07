@@ -1,8 +1,11 @@
 ﻿using Altkom.Shopper.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Altkom.Shopper.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/users")]
 public class UsersController : ControllerBase
@@ -17,12 +20,23 @@ public class UsersController : ControllerBase
     }
 
     // GET api/users    
+    [AllowAnonymous]
     [HttpGet]    
-    public IEnumerable<User> Get([FromServices] ICurrencyService currencyService)
+    public ActionResult<IEnumerable<User>> Get([FromServices] ICurrencyService currencyService)
     {
+        if (!this.User.Identity.IsAuthenticated)
+        {
+            return Forbid();
+        }
+
+        // var roleClaims = this.User.Claims.Where(c => c.Type == ClaimTypes.Role);
+
+
         logger.LogInformation("Get all users");
 
-        return _userRepository.GetAll();
+        var users = _userRepository.GetAll();
+
+        return Ok(users);
     }
 
     // GET api/users/{id}

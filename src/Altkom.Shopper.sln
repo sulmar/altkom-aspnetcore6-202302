@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altkom.Shopper.Api", "Altko
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleClient", "ConsoleClient\ConsoleClient.csproj", "{A43B11DC-77C3-4A59-AD0F-B76742E7A5C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altkom.Shopper.Domain", "Altkom.Shopper.Domain\Altkom.Shopper.Domain.csproj", "{01B719CD-07D3-4BA7-9ED8-BA4EF189E50D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altkom.Shopper.Domain", "Altkom.Shopper.Domain\Altkom.Shopper.Domain.csproj", "{01B719CD-07D3-4BA7-9ED8-BA4EF189E50D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Altkom.Shopper.Infrastructure", "Altkom.Shopper.Infrastructure\Altkom.Shopper.Infrastructure.csproj", "{6C9C3DC6-4BB6-4DBB-8346-9068233176AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Altkom.Shopper.Infrastructure", "Altkom.Shopper.Infrastructure\Altkom.Shopper.Infrastructure.csproj", "{6C9C3DC6-4BB6-4DBB-8346-9068233176AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

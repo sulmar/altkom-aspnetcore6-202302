@@ -6,7 +6,8 @@ namespace Altkom.Shopper.Api
     {
         public static WebApplication MapCustomers(this WebApplication app)
         {
-            app.MapGet("/api/customers", (ICustomerRepository repository) => repository.GetAll());
+            app.MapGet("/api/customers", (ICustomerRepository repository) => repository.GetAll())
+                .RequireAuthorization();
 
             // GET  - 200 OK, 404 Not Found
             // POST - 201 Created + Location
