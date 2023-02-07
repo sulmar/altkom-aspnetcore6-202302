@@ -2,6 +2,7 @@ using Altkom.Shopper.Api;
 using Altkom.Shopper.Api.Authentication;
 using Altkom.Shopper.Api.Extensions;
 using Altkom.Shopper.Api.Middlewares;
+using Altkom.Shopper.Api.Workers;
 using Altkom.Shopper.Domain;
 using Altkom.Shopper.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,20 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Us³uga w tle
+builder.Services.AddHostedService<Worker>();
+
 builder.Services.AddAuthentication("ApiKey")
     .AddScheme<ApiKeyAuthenticationSchemeOptions, ApiKeyAuthenticationSchemeHandler>("ApiKey", options => builder.Configuration.Bind("ApiKeySettings", options));
+
+// JWT Tokens https://jwt.io/
+// Przyk³ad generowania tokenu JWT:
+// https://github.com/sulmar/sulmar-eagle-micro-services/blob/master/Auth.Api/Program.cs#L27
+// Uwierzytelnianie za pomoc¹ tokenu JWT
+// https://github.com/sulmar/sulmar-eagle-micro-services/blob/master/Eagle.Micro.Customers.Api/Program.cs#L52
+
+// uwaga: w .NET 7 pojawi³o siê narzêdzie do generowania tokenów z linii poleceñ: dotnet user-jwts
+// https://learn.microsoft.com/en-us/aspnet/core/security/authentication/jwt-authn?view=aspnetcore-7.0
 
 builder.Services.AddAuthorization();
 
